@@ -1,31 +1,41 @@
 package be.sinube.restfusion.restfusion.JWT;
 
 
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import oracle.security.restsec.jwt.JwtException;
 import oracle.security.restsec.jwt.JwtToken;
 import oracle.security.restsec.jwt.SigningException;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.Date;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class GenerateJWTService {
 
-    public String generateJWT() {
+    public static void main(String[] args) {
+        generateJWT();
+    }
+
+    public static String generateJWT() {
 
         try{
-
-        String iss = "myissuer.com"; //JWT issuer -iss attribute
-        String prn = "my user"; //JWT principalll -prn attribute
+            String iss = "myissuer.com"; //JWT issuer -iss attribute
+            String prn = "my-user"; //JWT principalll -prn attribute
 
         JwtToken jwtToken = new JwtToken();
         //Fill in all the parameters- algorithm, issuer, expiry time, other claims etc
@@ -57,9 +67,14 @@ public class GenerateJWTService {
         PKCS8EncodedKeySpec kspec = new PKCS8EncodedKeySpec(buf);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         PrivateKey privateKey = kf.generatePrivate(kspec);
+         String jwtString = jwtToken.signAndSerialize(privateKey);
+
+            System.out.println("Oracle party token: ");
+            System.out.println(jwtString);
+
 
         // sign the token with a private key
-        String jwtString = jwtToken.signAndSerialize(privateKey);
+
         return jwtString;
         }
         catch(IOException | CertificateException e)
@@ -76,4 +91,5 @@ public class GenerateJWTService {
         }
 
     }
+
 }
